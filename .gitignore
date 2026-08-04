@@ -1,0 +1,21 @@
+# Credenciais — NUNCA versionar
+.env
+*.key
+credenciais*
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Saidas de coleta: grandes, regeneraveis, e o GitHub rejeita >100 MB.
+# O que precisa ser publico e a configuracao e os logs, nao os registros.
+revisoes/*/resultados/*.json
+revisoes/*/resultados/*.ris
+revisoes/*/resultados/*.csv
+revisoes/*/cache/
+
+# Estes sim entram (o "!" reverte a exclusao acima):
+!revisoes/*/resultados/log_prisma_s.json
+!revisoes/*/resultados/fluxograma_prisma.txt
+!revisoes/*/resultados/relatorio_dedup.txt
