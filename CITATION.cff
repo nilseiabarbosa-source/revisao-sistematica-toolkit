@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+title: revisao-sistematica-toolkit
+message: >-
+  Se este software for usado em uma revisão publicada, cite-o conforme abaixo.
+type: software
+authors:
+  - family-names: Barbosa
+    given-names: Nilseia
+    affiliation: Instituto Militar de Engenharia (IME)
+    # orcid: "https://orcid.org/0000-0000-0000-0000"   # PREENCHER
+  # PREENCHER: acrescente os demais autores do grupo, um bloco por pessoa
+  # - family-names: ...
+  #   given-names: ...
+  #   affiliation: ...
+repository-code: >-
+  https://github.com/nilseiabarbosa-source/revisao-sistematica-toolkit
+abstract: >-
+  Ferramenta em Python para automatizar a etapa de busca de revisões
+  sistemáticas e de escopo: consulta bases bibliográficas por API, deduplica
+  entre fontes, valida a estratégia contra um gabarito de estudos conhecidos e
+  exporta para Rayyan ou Covidence, gerando o log exigido pelo PRISMA-S.
+keywords:
+  - revisão sistemática
+  - revisão de escopo
+  - PRISMA-S
+  - recuperação da informação
+  - bibliometria
+license: MIT
+version: 0.2.0
+date-released: "2026-08-01"
