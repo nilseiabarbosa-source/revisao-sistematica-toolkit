@@ -1,0 +1,9 @@
+# Arquivos .bat precisam de CRLF: o cmd.exe quebra em construcoes de varias
+# linhas (setlocal, for, if) quando o arquivo tem quebras de linha Unix.
+# O sintoma e um erro do tipo "'tlocal' nao e reconhecido".
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+*.py text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
