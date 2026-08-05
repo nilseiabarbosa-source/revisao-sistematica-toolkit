@@ -1,0 +1,22 @@
+### pubmed
+(("Wearable Electronic Devices"[Mesh] OR wearable*[tiab] OR smartwatch*[tiab] OR "activity tracker*"[tiab] OR photoplethysmograph*[tiab] OR PPG[tiab] OR cuffless[tiab])) AND (("Hypertension"[Mesh] OR "Blood Pressure"[Mesh] OR hypertension[tiab] OR hypertensive[tiab] OR "blood pressure"[tiab])) AND (("Early Diagnosis"[Mesh] OR "early detection"[tiab] OR "early diagnosis"[tiab] OR screening[tiab] OR predict*[tiab] OR estimation[tiab] OR "risk stratification"[tiab])) AND ("2015/01/01"[Date - Publication] : "2026/12/31"[Date - Publication]) NOT (animals[Mesh] NOT humans[Mesh])
+
+### europepmc
+((TITLE_ABS:wearable* OR TITLE_ABS:smartwatch* OR TITLE_ABS:"activity tracker*" OR TITLE_ABS:photoplethysmograph* OR TITLE_ABS:PPG OR TITLE_ABS:cuffless)) AND ((TITLE_ABS:hypertension OR TITLE_ABS:hypertensive OR TITLE_ABS:"blood pressure")) AND ((TITLE_ABS:"early detection" OR TITLE_ABS:"early diagnosis" OR TITLE_ABS:screening OR TITLE_ABS:predict* OR TITLE_ABS:estimation OR TITLE_ABS:"risk stratification")) AND (PUB_YEAR:[2015 TO 2026])
+
+### scopus
+(TITLE-ABS-KEY(wearable* OR smartwatch* OR "activity tracker*" OR photoplethysmograph* OR PPG OR cuffless)) AND (TITLE-ABS-KEY(hypertension OR hypertensive OR "blood pressure")) AND (TITLE-ABS-KEY("early detection" OR "early diagnosis" OR screening OR predict* OR estimation OR "risk stratification")) AND PUBYEAR > 2014 AND PUBYEAR < 2027 AND (DOCTYPE(ar) OR DOCTYPE(re))
+
+### arxiv
+(all:wearable* OR all:smartwatch* OR all:"activity tracker*" OR all:photoplethysmograph* OR all:PPG OR all:cuffless) AND (all:hypertension OR all:hypertensive OR all:"blood pressure") AND (all:"early detection" OR all:"early diagnosis" OR all:screening OR all:predict* OR all:estimation OR all:"risk stratification")
+
+### semanticscholar
+(wearable* | smartwatch* | "activity tracker*" | photoplethysmograph* | PPG | cuffless) + (hypertension | hypertensive | "blood pressure") + ("early detection" | "early diagnosis" | screening | predict* | estimation | "risk stratification")
+
+### web_of_science
+TS=(wearable* OR smartwatch* OR "activity tracker*" OR photoplethysmograph* OR PPG OR cuffless)
+AND TS=(hypertension OR hypertensive OR "blood pressure")
+AND TS=("early detection" OR "early diagnosis" OR screening OR predict* OR estimation OR "risk stratification")
+
+### embase
+('wearable*':ti,ab OR 'smartwatch*':ti,ab OR 'activity tracker*':ti,ab OR 'photoplethysmograph*':ti,ab OR 'PPG':ti,ab OR 'cuffless':ti,ab) AND ('hypertension':ti,ab OR 'hypertensive':ti,ab OR 'blood pressure':ti,ab) AND ('early detection':ti,ab OR 'early diagnosis':ti,ab OR 'screening':ti,ab OR 'predict*':ti,ab OR 'estimation':ti,ab OR 'risk stratification':ti,ab) AND [2015-2026]/py

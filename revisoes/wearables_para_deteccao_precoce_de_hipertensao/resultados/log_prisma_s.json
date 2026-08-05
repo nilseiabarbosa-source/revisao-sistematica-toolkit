@@ -1,0 +1,26 @@
+[
+  {
+    "fonte": "pubmed_A",
+    "consulta": "((\"Wearable Electronic Devices\"[Mesh] OR wearable*[tiab] OR smartwatch*[tiab] OR \"activity tracker*\"[tiab] OR photoplethysmograph*[tiab] OR PPG[tiab] OR cuffless[tiab])) AND ((\"Hypertension\"[Mesh] OR \"Blood Pressure\"[Mesh] OR hypertension[tiab] OR hypertensive[tiab] OR \"blood pressure\"[tiab])) AND ((\"Early Diagnosis\"[Mesh] OR \"early detection\"[tiab] OR \"early diagnosis\"[tiab] OR screening[tiab] OR predict*[tiab] OR estimation[tiab] OR \"risk stratification\"[tiab])) AND (\"2015/01/01\"[Date - Publication] : \"2026/12/31\"[Date - Publication]) NOT (animals[Mesh] NOT humans[Mesh])",
+    "data_hora": "2026-08-05T16:26:19+00:00",
+    "n_recuperados": 1160,
+    "n_total_disponivel": 1161,
+    "erro": ""
+  },
+  {
+    "fonte": "europepmc_A",
+    "consulta": "((TITLE_ABS:wearable* OR TITLE_ABS:smartwatch* OR TITLE_ABS:\"activity tracker*\" OR TITLE_ABS:photoplethysmograph* OR TITLE_ABS:PPG OR TITLE_ABS:cuffless)) AND ((TITLE_ABS:hypertension OR TITLE_ABS:hypertensive OR TITLE_ABS:\"blood pressure\")) AND ((TITLE_ABS:\"early detection\" OR TITLE_ABS:\"early diagnosis\" OR TITLE_ABS:screening OR TITLE_ABS:predict* OR TITLE_ABS:estimation OR TITLE_ABS:\"risk stratification\")) AND (PUB_YEAR:[2015 TO 2026])",
+    "data_hora": "2026-08-05T16:26:37+00:00",
+    "n_recuperados": 1147,
+    "n_total_disponivel": 1147,
+    "erro": ""
+  },
+  {
+    "fonte": "arxiv_A",
+    "consulta": "(all:wearable* OR all:smartwatch* OR all:\"activity tracker*\" OR all:photoplethysmograph* OR all:PPG OR all:cuffless) AND (all:hypertension OR all:hypertensive OR all:\"blood pressure\") AND (all:\"early detection\" OR all:\"early diagnosis\" OR all:screening OR all:predict* OR all:estimation OR all:\"risk stratification\")",
+    "data_hora": "2026-08-05T16:26:43+00:00",
+    "n_recuperados": 87,
+    "n_total_disponivel": 87,
+    "erro": ""
+  }
+]

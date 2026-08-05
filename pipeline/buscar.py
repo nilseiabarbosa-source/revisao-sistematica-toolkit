@@ -126,9 +126,21 @@ def main() -> None:
     # ------------------------------------------------------------ validação
     dois = {normalizar_doi(r.doi) for r in res.unicos if r.doi}
     achados = [d for d in cfg.ITENS_CONHECIDOS if normalizar_doi(d) in dois]
+    # O aviso so faz sentido quando --limite foi de fato o fator limitante.
+    # Comparar recuperado < disponivel disparava o alerta por diferencas de
+    # uma ou duas unidades — registros que o parser ignora, como capitulos de
+    # livro sem o elemento esperado — e dizia "truncada por --limite" mesmo
+    # quando o usuario nao usou a opcao.
     truncou = any(
-        l.get("n_total_disponivel") and l["n_recuperados"] < l["n_total_disponivel"]
+        l.get("n_total_disponivel") and l["n_total_disponivel"] > args.limite
         for l in logs
+    )
+    perdidos_parser = sum(
+        l["n_total_disponivel"] - l["n_recuperados"]
+        for l in logs
+        if l.get("n_total_disponivel")
+        and l["n_total_disponivel"] <= args.limite
+        and l["n_recuperados"] < l["n_total_disponivel"]
     )
     if cfg.ITENS_CONHECIDOS:
         pct = 100 * len(achados) / len(cfg.ITENS_CONHECIDOS)
@@ -143,6 +155,11 @@ def main() -> None:
             print("\n  AVISO: a coleta foi truncada por --limite, entao esta taxa"
                   "\n  NAO mede a sensibilidade da busca. Para isso, rode:"
                   f"\n    {PY} -m pipeline.validar --revisao {args.revisao}")
+
+    if perdidos_parser:
+        print(f"\nNota: {perdidos_parser} registro(s) vieram da base mas nao "
+              "puderam ser convertidos\n(tipicamente capitulos de livro ou "
+              "registros retirados). Diferenca esperada e pequena.")
 
     # ------------------------------------------------------------- perfil
     com_resumo = sum(1 for r in res.unicos if r.resumo)
