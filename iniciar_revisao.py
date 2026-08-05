@@ -15,6 +15,7 @@ de preenchimento.
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
 import unicodedata
@@ -23,6 +24,11 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent
 REVISOES = RAIZ / "revisoes"
+
+# No PowerShell do Windows nao existe `python3` — o comando e `python`. Como as
+# instrucoes impressas sao para o usuario copiar e colar, precisam usar o nome
+# certo da plataforma dele.
+PY = "python" if os.name == "nt" else "python3"
 
 BASES_DISPONIVEIS = {
     "pubmed": "PubMed/MEDLINE — livre, biomédica, indexação MeSH",
@@ -254,7 +260,7 @@ evidência sem dar nenhum sinal.
 **2. Calibre e valide, antes de coletar.**
 
 ```bash
-python3 -m pipeline.validar --revisao {slug}
+{py} -m pipeline.validar --revisao {slug}
 ```
 
 Mostra o volume por base e quantos estudos do gabarito são recuperados.
@@ -264,13 +270,13 @@ Enquanto a sensibilidade não estiver alta, ajuste os blocos e repita. Contagem
 **3. Se a sensibilidade estiver baixa**, descubra qual bloco está barrando:
 
 ```bash
-python3 -m pipeline.diagnosticar --revisao {slug}
+{py} -m pipeline.diagnosticar --revisao {slug}
 ```
 
 **4. Colete.**
 
 ```bash
-python3 -m pipeline.buscar --revisao {slug}
+{py} -m pipeline.buscar --revisao {slug}
 ```
 
 **5. Exporte para triagem.** O `.ris` gerado importa direto no Rayyan e no
@@ -334,7 +340,7 @@ def main() -> None:
     (destino / "config.py").write_text(gerar_config(dados), encoding="utf-8")
     (destino / "README.md").write_text(
         PROXIMOS_PASSOS.format(
-            titulo=dados["titulo"], data=date.today().isoformat(), slug=slug,
+            titulo=dados["titulo"], data=date.today().isoformat(), slug=slug, py=PY,
             bases="\n".join(f"- **{b}** — {BASES_DISPONIVEIS[b]}" for b in dados["bases"]),
         ),
         encoding="utf-8",
@@ -351,7 +357,7 @@ def main() -> None:
     if len(dados["itens"]) < 5:
         print("\n  ATENÇÃO: gabarito com menos de 5 itens. Complete antes de")
         print("  validar — é ele que diz se a busca funciona.")
-    print(f"\nPróximo passo:  python3 -m pipeline.validar --revisao {slug}")
+    print(f"\nPróximo passo:  {PY} -m pipeline.validar --revisao {slug}")
 
 
 if __name__ == "__main__":

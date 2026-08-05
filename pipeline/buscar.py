@@ -26,7 +26,7 @@ from fontes import Registro, normalizar_doi  # noqa: E402
 from fontes.dedup import deduplicar  # noqa: E402
 from modelo.tradutor import gerar_todas  # noqa: E402
 from pipeline.exportar import exportar_csv, exportar_ris  # noqa: E402
-from pipeline.validar import adaptador, carregar_config, consulta_para  # noqa: E402
+from pipeline.validar import PY, adaptador, carregar_config, consulta_para  # noqa: E402
 
 
 def agora() -> str:
@@ -142,7 +142,7 @@ def main() -> None:
             # numero seria lido como falha da estrategia.
             print("\n  AVISO: a coleta foi truncada por --limite, entao esta taxa"
                   "\n  NAO mede a sensibilidade da busca. Para isso, rode:"
-                  f"\n    python3 -m pipeline.validar --revisao {args.revisao}")
+                  f"\n    {PY} -m pipeline.validar --revisao {args.revisao}")
 
     # ------------------------------------------------------------- perfil
     com_resumo = sum(1 for r in res.unicos if r.resumo)

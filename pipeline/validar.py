@@ -11,11 +11,16 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import os
 import sys
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
+
+# No PowerShell do Windows nao existe `python3` — as instrucoes impressas
+# precisam usar o nome certo da plataforma.
+PY = "python" if os.name == "nt" else "python3"
 
 from modelo.tradutor import (  # noqa: E402
     consulta_arxiv,
@@ -144,11 +149,11 @@ def main() -> None:
         print("Sensibilidade alta. Pode coletar.")
     elif pct >= 70:
         print("Sensibilidade intermediária. Vale investigar antes de coletar:")
-        print(f"  python3 -m pipeline.diagnosticar --revisao {args.revisao}")
+        print(f"  {PY} -m pipeline.diagnosticar --revisao {args.revisao}")
     else:
         print("Sensibilidade BAIXA. Não colete ainda — a busca está perdendo")
         print("evidência conhecida. Rode o diagnóstico para ver qual bloco barra:")
-        print(f"  python3 -m pipeline.diagnosticar --revisao {args.revisao}")
+        print(f"  {PY} -m pipeline.diagnosticar --revisao {args.revisao}")
     if perdidos:
         print(f"\nPerdidos: {len(perdidos)}")
 
