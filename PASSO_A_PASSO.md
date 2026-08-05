@@ -1,302 +1,317 @@
 # Passo a passo — para quem não programa
 
-Guia detalhado para criar e rodar uma revisão nova. Não é preciso saber
-programar: você vai responder perguntas e ler o que aparece na tela.
+Guia para criar e rodar uma revisão nova. Não é preciso saber programar: você
+responde perguntas e lê o que aparece na tela.
 
-Reserve uns 20 minutos para a primeira vez.
+Reserve uns 30 minutos na primeira vez.
+
+> **Este guia foi reescrito depois do primeiro uso real.** Tudo que deu errado
+> naquela sessão está aqui, com a solução. Os avisos em destaque não são
+> hipotéticos — são as coisas que efetivamente falharam.
 
 ---
 
-## O que preparar antes
+## Antes de começar: monte o gabarito
 
 Uma coisa só, e é a mais importante: **uma lista de 10 a 20 artigos que você já
-sabe que deveriam entrar na sua revisão**, com o DOI de cada um.
+sabe que deveriam entrar na sua revisão**, com o DOI de cada.
 
-O DOI é aquele código que começa com `10.` — por exemplo
-`10.1038/s41591-023-02332-5`. Aparece na primeira página do artigo, na página do
-periódico, ou pesquisando o título no Google Scholar.
+O DOI é o código que começa com `10.` — por exemplo `10.1161/JAHA.126.050501`.
+Está na primeira página do artigo, na página do periódico, ou pesquisando o
+título no Google Scholar.
 
-De onde tirar essa lista: das revisões já publicadas mais próximas do seu tema.
-Olhe as referências delas e escolha as que claramente atendem aos seus critérios.
+De onde tirar: das revisões publicadas mais próximas do seu tema. Olhe as
+referências e escolha as que claramente atendem aos seus critérios.
 
-**Por que isso importa tanto.** É com essa lista que o programa testa se a sua
-busca funciona. Na revisão da Karina, a estratégia inicial parecia ótima — 924
-resultados, string revisada por especialistas — e recuperava menos da metade dos
-estudos que a própria proposta citava como centrais. Sem esse teste, ninguém
-teria percebido.
+**Por que isso decide tudo.** É com essa lista que o programa testa se a busca
+funciona. Na revisão de câncer que originou este código, a estratégia inicial
+parecia ótima — 924 resultados, string revisada por especialistas — e recuperava
+menos da metade dos estudos que a própria proposta citava como centrais. Só
+apareceu porque havia gabarito para comparar.
 
-Anote também, antes de começar: o título da revisão, o recorte de anos, e os
-grupos de termos de busca (falo deles no passo 4).
+Deixe a lista pronta num arquivo de texto antes de abrir o programa.
 
 ---
 
-## Passo 1 — Abrir o programa
+## Passo 1 — Ver as extensões dos arquivos
 
-**Você não abre o Python.** Se abrir o Python vai aparecer `>>>` e nada vai
-funcionar.
+Faça isto uma vez e evita confusão depois. O Windows esconde a extensão dos
+arquivos, então `iniciar.bat` e `iniciar_revisao.py` aparecem os dois como
+"iniciar…" e é fácil clicar no errado.
 
-### Jeito mais fácil: clique duplo
+No Explorador de Arquivos:
 
-1. Abra o Explorador de Arquivos (a pastinha amarela na barra de tarefas)
-2. Cole este caminho na barra de endereço e dê Enter:
-   `C:\Users\nilse\projetos\revisao-sistematica-toolkit`
-3. Procure o arquivo **`iniciar.bat`** e dê **dois cliques**
+- **Windows 11** — botão **Ver** → **Mostrar** → marque **Extensões de nomes de arquivos**
+- **Windows 10** — aba **Exibir** → marque **Extensões de nomes de arquivos**
 
-Abre uma janela preta e o programa começa. Pode pular para o passo 3.
+---
 
-> Se o Windows avisar que o arquivo pode ser perigoso, é só porque foi baixado
-> ou criado recentemente. Clique em "Mais informações" → "Executar assim mesmo".
+## Passo 2 — Abrir o programa
+
+### Jeito mais simples: clique duplo
+
+1. Abra o Explorador de Arquivos
+2. Cole na barra de endereço: `C:\Users\nilse\projetos\revisao-sistematica-toolkit`
+3. Dois cliques em **`iniciar.bat`** (o do ícone de engrenagem)
+
+O `iniciar.bat` procura o Python sozinho, mesmo que ele não esteja configurado
+no sistema. Se o Windows avisar que o arquivo pode ser perigoso, clique em
+**Mais informações** → **Executar assim mesmo**.
 
 ### Jeito pelo terminal
 
-Se preferir, ou se o clique duplo não funcionar:
-
-1. Aperte a tecla **Windows**
-2. Digite `powershell`
-3. Clique em **Windows PowerShell** (ícone azul)
-4. Na janela que abrir, cole a linha abaixo e dê Enter:
+Aperte **Windows**, digite `powershell`, abra, e cole:
 
 ```
 cd C:\Users\nilse\projetos\revisao-sistematica-toolkit
 ```
 
-5. Cole esta e dê Enter:
-
 ```
 python iniciar_revisao.py
 ```
 
-> **Como colar no PowerShell:** `Ctrl+V` funciona. Clicar com o botão direito
-> também cola.
+> ### ⚠ Se aparecer "python não é reconhecido"
 >
-> **Atenção:** é `python`, não `python3`. No Windows o `python3` não existe.
+> Não significa que o Python não está instalado. Janelas abertas pelo menu
+> Iniciar herdam uma cópia antiga das configurações do sistema, e **nem abrir
+> uma janela nova resolve** — só reiniciar o computador.
+>
+> Use este comando, que funciona sempre porque não depende de configuração:
+>
+> ```
+> & "C:\Users\nilse\AppData\Local\Programs\Python\Python312\python.exe" iniciar_revisao.py
+> ```
+>
+> O `&` no início é obrigatório. Ou simplesmente use o `iniciar.bat`, que já
+> resolve isso.
 
 ---
 
-## Passo 2 — Dar uma olhada sem compromisso (opcional)
+## Passo 3 — ⚠ A regra mais importante
 
-Se quiser ver como fica antes de responder qualquer coisa, rode:
-
-```
-python iniciar_revisao.py --exemplo
-```
-
-Isso cria uma revisão de exemplo — sobre wearables e hipertensão — sem fazer
-nenhuma pergunta. Você pode abrir a pasta `revisoes\exemplo_wearables_hipertensao`
-e ver o arquivo `config.py`, que é o que o programa gera.
-
-Não interfere em nada. É só para você ver o formato.
-
----
-
-## Passo 3 — Responder as perguntas
-
-O programa vai perguntando, uma coisa de cada vez. Digite a resposta e dê Enter.
-
-Quando aparecer algo entre colchetes, tipo `[escopo]`, aquilo é a resposta
-padrão: se você só apertar Enter sem digitar nada, ele usa aquela.
-
-**Título da revisão** — como você chamaria o trabalho.
-Exemplo: `Wearables para detecção precoce de hipertensão`
-
-**Tipo (escopo / sistematica)** — em geral `escopo`, se o objetivo é mapear um
-campo, e `sistematica` se é responder a uma pergunta fechada de efeito.
-
-**População / Conceito / Contexto** — a sua pergunta destrinchada em três.
-São só para documentação, não afetam a busca. Exemplo:
-- População: `adultos sem diagnóstico de hipertensão`
-- Conceito: `detecção precoce por sinais de wearables`
-- Contexto: `qualquer país`
-
-**Ano inicial e Ano final** — o recorte temporal. Exemplo: `2015` e `2026`.
+> **Digite ou cole uma linha de cada vez. Nunca cole um bloco de várias linhas
+> de uma vez.**
+>
+> Isso não é preciosismo. No primeiro uso real, a colagem em bloco
+> dessincronizou a leitura: o programa gravou só o primeiro bloco de termos, e
+> o segundo bloco inteiro foi parar dentro do gabarito, no lugar dos DOIs. O
+> arquivo saiu corrompido e o trabalho teve que ser refeito.
+>
+> O programa lê linha por linha, esperando o Enter. Colar tudo de uma vez
+> atropela essa espera.
 
 ---
 
-## Passo 4 — Os blocos de busca
+## Passo 4 — As perguntas iniciais
 
-Aqui é a parte que exige mais atenção, e é onde a revisão se decide.
+Digite a resposta e Enter. Quando aparecer algo entre colchetes, como
+`[escopo]`, é a resposta padrão — só Enter já aceita.
 
-**A ideia.** Um bloco é um conceito da sua pergunta. O programa combina os
-blocos com "E" — ou seja, um artigo só entra se atender a **todos**. Dentro de
-um bloco, os termos são combinados com "OU" — basta atender a **um**.
+| Pergunta | Exemplo de resposta |
+|---|---|
+| Título da revisão | `Wearables para deteccao precoce de hipertensao` |
+| Tipo (escopo / sistematica) | Enter (aceita `escopo`) |
+| População | `adultos sem diagnostico de hipertensao` |
+| Conceito / Intervenção | `deteccao precoce por sinais de wearables` |
+| Contexto | `qualquer pais` |
+| Ano inicial | `2015` |
+| Ano final | `2026` |
 
-O arranjo mais comum são três blocos:
+Se o título já tiver sido usado antes, o programa avisa **na hora** e oferece as
+saídas: outro título, apagar a pasta antiga, ou continuar com outro nome.
+
+---
+
+## Passo 5 — Os blocos de busca
+
+É a parte conceitual, e é onde a revisão se decide.
+
+**A lógica.** Cada bloco é um conceito da sua pergunta. Os blocos se combinam
+com "E" — o artigo só entra se atender a **todos**. Dentro de um bloco, os
+termos se combinam com "OU" — basta atender a **um**.
+
+O arranjo típico são três:
 
 | Bloco | O que é | Termos de exemplo |
 |---|---|---|
-| #1 | a tecnologia ou intervenção | `wearable`, `smartwatch` |
-| #2 | a doença ou população | `hypertension`, `blood pressure` |
-| #3 | o desfecho | `early detection`, `screening` |
+| #1 | tecnologia ou intervenção | `wearable*`, `smartwatch*`, `photoplethysmograph*` |
+| #2 | doença ou população | `hypertension`, `hypertensive`, `blood pressure` |
+| #3 | desfecho | `early detection`, `screening`, `predict*` |
 
-**Como digitar.** Ele pede o nome do bloco, depois os termos — **um por linha**.
-Quando terminar os termos, dê Enter numa linha vazia para encerrar.
-
-Assim:
+**Como digitar.** Ele pede o nome do bloco, depois os termos, um por linha:
 
 ```
 Nome do bloco #1 (vazio encerra): Wearables
 
 Termos do bloco 'Wearables'
-  Um termo por linha. Frases com espaço viram busca exata;
-  terminar em * usa curinga (ex.: cancer*). Linha vazia encerra.
   > wearable*
   > smartwatch*
-  > activity tracker*
+  > photoplethysmograph*
   >
 ```
 
-Aquele último `>` vazio, seguido de Enter, é o que encerra a lista.
+Aquele último `>` com **Enter sozinho** é o que encerra a lista. Se você digitar
+e nada acontecer, provavelmente ainda está dentro dela.
 
-**Duas regras sobre os termos:**
+Depois ele pede os **descritores MeSH** do bloco. É opcional — Enter sozinho
+pula. MeSH é o vocabulário controlado do PubMed (`Hypertension`, `Wearable
+Electronic Devices`); se você conhece os do seu tema, melhora a busca.
 
-- **Termo terminado em `*`** pega todas as variações. `cancer*` encontra
-  *cancer*, *cancers*, *cancerous*. Use bastante — é o que evita perder artigo
-  por diferença de plural.
-- **Termo com espaço** é tratado como expressão exata. `early detection` só
-  encontra as duas palavras juntas, nessa ordem.
+Repita para os blocos #2 e #3. Quando não quiser mais nenhum, deixe o **nome
+vazio** e Enter.
 
-**Termos em inglês.** As bases internacionais indexam em inglês. Termos em
-português só encontrariam artigos brasileiros no SciELO.
+**Duas regras sobre termos:**
 
-Depois dos termos ele pergunta os **descritores MeSH** do bloco. É opcional —
-pode dar Enter direto e pular. MeSH é o vocabulário controlado do PubMed
-(`Hypertension`, `Wearable Electronic Devices`); se você conhece os do seu tema,
-melhora bastante a busca.
-
-Quando não quiser mais blocos, deixe o **nome do bloco vazio** e dê Enter.
+- **Terminar em `*`** pega as variações: `predict*` encontra *predict*,
+  *prediction*, *predictive*, *predictor*. Use bastante — evita perder artigo
+  por diferença de plural ou forma verbal.
+- **Termos em inglês.** As bases internacionais indexam em inglês. Os textos
+  livres (título, população) podem ser em português, com acento.
 
 ---
 
-## Passo 5 — O gabarito
+## Passo 6 — O gabarito
 
-Agora entram os DOIs que você separou no começo. Um por linha, no formato:
+Agora os DOIs que você separou. Um por linha, no formato `DOI ; descrição`:
 
 ```
-10.1038/s41591-023-02332-5 ; Placido 2023 — modelo de pâncreas
+> 10.1161/JAHA.126.050501 ; JAHA 2026 - validacao de manguito por PPG
+> 10.3390/jpm16070377 ; J Pers Med 2026 - wearables e ML
+>
 ```
 
-O ponto e vírgula separa o DOI da descrição. A descrição é só para você se
-localizar depois.
-
-Linha vazia encerra.
-
-Se você puser menos de 5, o programa avisa. Ele deixa continuar, mas com 2 ou 3
-o teste não diz grande coisa.
+Enter vazio encerra. Se puser menos de 5, o programa avisa.
 
 ---
 
-## Passo 6 — Escolher as bases
+## Passo 7 — As bases
 
-Ele mostra a lista e sugere `pubmed,europepmc,arxiv`. Para começar, aceite a
-sugestão dando Enter.
+Ele mostra a lista e sugere `pubmed,europepmc,arxiv`. Enter aceita.
 
-Essas três não precisam de senha nem cadastro. Dá para fazer uma revisão inteira
-só com elas. Scopus, OpenAlex e CORE exigem chave e podem ficar para depois.
+Essas três não pedem cadastro nem senha, e dão conta de uma revisão inteira.
+Scopus, OpenAlex e CORE exigem chave e podem entrar depois — basta editar a
+linha `BASES` no `config.py` e rodar de novo.
 
 ---
 
-## Passo 7 — Ver se a busca funciona
+## Passo 8 — ⚠ Conferir o arquivo gerado
 
-Terminadas as perguntas, ele mostra algo como:
+**Não pule este passo.** É o que teria evitado o retrabalho no primeiro uso.
+
+Abra o arquivo `config.py` da sua revisão — no Bloco de Notas mesmo. Ele fica em:
 
 ```
-Revisão criada em revisoes/wearables_hipertensao/
-Próximo passo:  python -m pipeline.validar --revisao wearables_hipertensao
+revisoes\NOME_DA_SUA_REVISAO\config.py
 ```
 
-**Copie essa última linha e rode.** Ela não baixa nada — só conta e testa. Leva
-menos de um minuto.
+Confira três coisas:
 
-O resultado se parece com isto:
+1. **`BLOCOS` tem todos os blocos que você digitou?** Procure por `"nome":` —
+   deve aparecer uma vez para cada bloco.
+2. **`ITENS_CONHECIDOS` tem só DOIs?** Todas as chaves devem começar com `10.`.
+   Se aparecer texto solto ali, a leitura embaralhou.
+3. **Os termos estão nos blocos certos?**
+
+Se algo estiver errado, você pode **corrigir o arquivo à mão** no Bloco de
+Notas, sem refazer nada. É um arquivo de texto comum — mantenha as aspas e as
+vírgulas como estão nos exemplos.
+
+---
+
+## Passo 9 — Testar antes de coletar
+
+```
+python -m pipeline.validar --revisao NOME_DA_SUA_REVISAO
+```
+
+Não baixa nada, só conta e testa. Leva menos de um minuto. Saída real:
 
 ```
 Base                 Vertente A
-pubmed                      742
-europepmc                   741
-arxiv                        34
+pubmed                    1.161
+europepmc                 1.147
+arxiv                        87
 
 SENSIBILIDADE — o gabarito é recuperado?
-  [x] Placido 2023 — modelo de pâncreas
-  [ ] Kinar 2016 — ColonFlag
+  [x] EMBC 2021 — BP sem manguito por PPG de pulso
+  [ ] JAHA 2026 — validacao clinica de manguito de dedo
   ...
-  14/16 (88%)
+  9/10 (90%)
 
 Sensibilidade alta. Pode coletar.
 ```
 
 **Como ler:**
 
-Os números de cima são quantos artigos existem em cada base. Servem para você
-dimensionar o trabalho de triagem — a conta prática é cerca de 100 registros por
-hora, por revisor.
+Os números de cima são quantos artigos existem em cada base — servem para
+dimensionar a triagem. A conta prática é cerca de 100 registros por hora, por
+revisor, e a triagem é feita em dupla.
 
-Os `[x]` e `[ ]` são o teste que importa: quais do seu gabarito a busca
-encontrou. `[x]` achou, `[ ]` não.
+Os `[x]` e `[ ]` são o teste que importa. O veredito da última linha:
 
-A última linha é o veredito:
-
-- **Sensibilidade alta** (90% ou mais) — pode seguir
-- **Intermediária** (70 a 89%) — vale investigar
-- **BAIXA** (menos de 70%) — **não colete ainda**, a busca está perdendo coisa
-  que você sabe que deveria entrar
+| Sensibilidade | O que fazer |
+|---|---|
+| 90% ou mais | pode coletar |
+| 70 a 89% | vale investigar antes |
+| menos de 70% | **não colete** — a busca está perdendo evidência conhecida |
 
 ---
 
-## Passo 8 — Quando a sensibilidade está baixa
-
-Rode o diagnóstico:
+## Passo 10 — Quando a sensibilidade está baixa
 
 ```
 python -m pipeline.diagnosticar --revisao NOME_DA_SUA_REVISAO
 ```
 
 Ele testa cada estudo perdido contra cada bloco e diz **qual bloco está
-barrando**. A saída indica coisas como "o bloco #2 barrou 9 estudos" — o que
-significa que faltam sinônimos ali.
+barrando** — o que transforma "a busca está ruim" em algo acionável.
 
-O erro mais comum, e que aconteceu na revisão da Karina: o bloco só aceitava a
+O erro mais comum, e que aconteceu na revisão de câncer: o bloco só aceitava a
 forma nominal (`risk prediction`) e não a verbal (`predict*`). Artigos
 intitulados "Predicting cancer risk" ficavam de fora.
 
-**Como corrigir:** abra o arquivo `config.py` da sua revisão, no Bloco de Notas
-mesmo. Ele fica em `revisoes\NOME_DA_SUA_REVISAO\config.py`. Acrescente os
-termos que faltam na lista do bloco problemático, salve, e rode o `validar` de
-novo.
-
-Repita até a sensibilidade subir. Cada rodada custa segundos.
+Para corrigir: abra o `config.py`, acrescente os termos que faltam no bloco
+problemático, salve, e rode o `validar` de novo. Cada rodada custa segundos —
+repita quantas vezes precisar.
 
 ---
 
-## Passo 9 — Coletar
-
-Só depois que a sensibilidade estiver alta:
+## Passo 11 — Coletar
 
 ```
 python -m pipeline.buscar --revisao NOME_DA_SUA_REVISAO
 ```
 
-Este demora — de minutos a algumas horas, conforme o volume. Pode deixar
-rodando e ir fazer outra coisa. Se for interrompido, rodar de novo continua de
-onde parou.
+Demora de minutos a horas, conforme o volume. Pode deixar rodando. Se for
+interrompido, rodar de novo continua de onde parou.
 
-Ao terminar, os arquivos ficam em `revisoes\NOME_DA_SUA_REVISAO\resultados\`:
+Resultado real da revisão de wearables:
+
+```
+Registros identificados: 2394
+Duplicatas removidas: 1047
+Registros para triagem: 1347
+Com resumo: 1344/1347 (100%)
+```
+
+Os arquivos ficam em `revisoes\NOME\resultados\`:
 
 | Arquivo | Para que serve |
 |---|---|
 | `registros_para_triagem.ris` | importar no Rayyan ou Covidence |
 | `registros_para_triagem.csv` | abrir no Excel |
+| `strings_de_busca.txt` | as buscas exatas, para o pré-registro no OSF |
 | `log_prisma_s.json` | anexo metodológico do artigo |
-| `strings_de_busca.txt` | as buscas exatas, para o pré-registro |
+
+**O número mais importante é o "com resumo".** Registro sem resumo tem que ser
+triado só pelo título, o que é bem pior. 100% é o ideal.
 
 ---
 
 ## Quando der errado
 
-**"python não é reconhecido como nome de cmdlet"**
-O Python não está instalado ou não foi adicionado ao PATH. Baixe em
-python.org/downloads e, na primeira tela do instalador, **marque a caixa "Add
-python.exe to PATH"** antes de clicar em Install. É a caixa que quase todo mundo
-esquece.
+**"python não é reconhecido"**
+Ver o quadro do passo 2. Use o caminho completo ou o `iniciar.bat`.
 
 **"python3 não é reconhecido"**
 No Windows é `python`, sem o 3.
@@ -304,27 +319,42 @@ No Windows é `python`, sem o 3.
 **"No module named 'requests'"**
 Rode uma vez: `python -m pip install -r requirements.txt`
 
-**"Configuração não encontrada"**
-O nome da revisão está errado. Veja os nomes disponíveis com:
-`dir revisoes`
+**"já existe uma revisão chamada..."**
+O nome está em uso. Escolha outro título, apague a pasta antiga, ou rode com
+`--slug outro_nome`.
 
-**A janela preta fecha sozinha**
-Se estiver usando o `iniciar.bat`, ele já segura a janela aberta. Se rodou pelo
-PowerShell, a janela não fecha — role para cima para ler.
+**"Configuração não encontrada"**
+O nome da revisão está errado. Veja os disponíveis com `dir revisoes`
+
+**O `config.py` saiu embaralhado**
+Foi colagem em bloco. Corrija à mão no Bloco de Notas — é mais rápido que
+refazer — e da próxima vez digite linha a linha.
 
 **Uma base deu erro e as outras funcionaram**
-Normal. Serviços saem do ar de vez em quando. O programa continua com as demais
-e registra o erro no log. Tente aquela base de novo mais tarde.
+Normal, serviços saem do ar. O programa segue com as demais e registra no log.
+Tente aquela base mais tarde.
+
+**A janela preta fecha sozinha**
+Se usou o `iniciar.bat`, ele segura a janela. Pelo PowerShell a janela não
+fecha — role para cima.
 
 ---
 
 ## Resumo dos comandos
 
 ```
-python iniciar_revisao.py                                  criar a revisão
-python -m pipeline.validar --revisao NOME                  testar (rápido)
-python -m pipeline.diagnosticar --revisao NOME             ver o que falha
-python -m pipeline.buscar --revisao NOME                   coletar (demorado)
+python iniciar_revisao.py                          criar a revisão
+python -m pipeline.validar --revisao NOME          testar (rápido)
+python -m pipeline.diagnosticar --revisao NOME     ver o que falha
+python -m pipeline.buscar --revisao NOME           coletar (demorado)
+dir revisoes                                       listar as revisões
 ```
 
 Substitua `NOME` pelo nome que o programa mostrou ao criar a revisão.
+
+## Depois da coleta
+
+O toolkit cobre a busca. As etapas seguintes — pré-registro no OSF, triagem
+dupla, extração de dados, avaliação de risco de viés e redação — continuam
+sendo trabalho humano. O `.ris` gerado é o ponto de entrada para o Rayyan ou o
+Covidence, onde a triagem acontece.
