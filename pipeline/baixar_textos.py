@@ -229,9 +229,11 @@ def main() -> None:
             urls.append(r["url_texto_completo"])
         if doi:
             try:
-                pdf = up.melhor_pdf(doi)
-                if pdf and pdf not in urls:
-                    urls.append(pdf)
+                # Todos os locais abertos, repositorio antes de editora — ver
+                # docstring de Unpaywall.locais_abertos.
+                for u in up.locais_abertos(doi):
+                    if u not in urls:
+                        urls.append(u)
             except Exception:
                 pass
 

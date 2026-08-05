@@ -34,6 +34,32 @@ class Unpaywall:
         melhor = dados.get("best_oa_location") or {}
         return melhor.get("url_for_pdf") or melhor.get("url") or None
 
+    def locais_abertos(self, doi: str) -> list[str]:
+        """Todos os locais abertos, repositorio primeiro.
+
+        O `best_oa_location` do Unpaywall costuma apontar para o site da
+        editora, que e a copia de melhor qualidade — mas tambem a que bloqueia
+        acesso automatizado. Wiley, RSC, ACS e Science devolvem 403 mesmo em
+        artigo aberto. Repositorio (PMC, institucional, arXiv) nao bloqueia,
+        entao vale tentar por ele antes.
+        """
+        dados = self.consultar(doi)
+        if not dados:
+            return []
+        locais = dados.get("oa_locations") or []
+        if not locais and dados.get("best_oa_location"):
+            locais = [dados["best_oa_location"]]
+
+        def prioridade(l: dict) -> int:
+            return 0 if (l.get("host_type") or "") == "repository" else 1
+
+        urls: list[str] = []
+        for l in sorted(locais, key=prioridade):
+            for u in (l.get("url_for_pdf"), l.get("url")):
+                if u and u not in urls:
+                    urls.append(u)
+        return urls
+
     def enriquecer(self, registro: Registro) -> Registro:
         """Preenche acesso_aberto e url_texto_completo quando ainda vazios."""
         if registro.url_texto_completo or not registro.doi:
