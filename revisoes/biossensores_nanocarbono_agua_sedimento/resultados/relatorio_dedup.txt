@@ -1,0 +1,3 @@
+Registros identificados: 5969
+Duplicatas removidas: 2369 (DOI 2334, PMID 0, titulo 28, similaridade 7)
+Registros para triagem: 3600
