@@ -52,9 +52,15 @@ carregar_env()
 
 USER_AGENT = "RevisaoSistematica/1.0 (pesquisa academica; mailto:{email})"
 
-# Muitas APIs pedem ou premiam a identificacao por e-mail (Crossref, Unpaywall,
-# OpenAlex). Defina antes de usar os adaptadores.
-EMAIL_CONTATO = "nilseia.barbosa@ime.eb.br"
+# Muitas APIs pedem ou premiam a identificacao por e-mail (NCBI, Crossref,
+# Unpaywall, OpenAlex): o endereco vai em cada requisicao e no User-Agent.
+#
+# Vem do .env para que cada pessoa que usar o toolkit se identifique com o
+# proprio endereco. Rodar com o e-mail de outra pessoa nao e' detalhe de
+# cortesia: o NCBI bloqueia por e-mail quando o limite de requisicao e'
+# estourado, e o bloqueio recai sobre quem nao rodou nada. O padrao abaixo
+# existe so' para nao quebrar a maquina de origem do projeto.
+EMAIL_CONTATO = os.environ.get("EMAIL_CONTATO", "nilseia.barbosa@ime.eb.br")
 
 
 @dataclass

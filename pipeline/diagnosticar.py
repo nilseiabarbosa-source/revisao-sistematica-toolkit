@@ -68,9 +68,17 @@ def main() -> None:
     print(f"\n{len(perdidos)} de {len(cfg.ITENS_CONHECIDOS)} não recuperados.")
     print("Testando cada um bloco a bloco.\n")
 
+    # A consulta do PubMed nao e' so' blocos + janela: o tradutor acrescenta
+    # `NOT (animals[Mesh] NOT humans[Mesh])`. Sem testar essa clausula aqui, um
+    # estudo barrado por ela aparecia com TODAS as colunas "ok" — o diagnostico
+    # dizia que estava tudo certo enquanto a validacao o dava como perdido.
+    excluir_animais = getattr(cfg, "EXCLUIR_ANIMAIS", True)
+
     cabecalho = f"{'Estudo':<40}{'PMID':>10}  "
     cabecalho += "".join(f"{b['nome'][:9]:<11}" for b in cfg.BLOCOS)
-    cabecalho += "janela"
+    cabecalho += f"{'janela':<9}"
+    if excluir_animais:
+        cabecalho += "animais"
     print(cabecalho)
     print("-" * len(cabecalho))
 
@@ -103,8 +111,22 @@ def main() -> None:
         if not na_janela:
             falhas["(fora da janela)"] += 1
 
-        print(f"{desc[:39]:<40}{pmid:>10}  " + "".join(marcas)
-              + ("ok" if na_janela else "FORA"))
+        so_animal = False
+        if excluir_animais:
+            try:
+                so_animal = pm.contar(
+                    f"{pmid}[uid] AND (animals[Mesh] NOT humans[Mesh])"
+                ) > 0
+            except Exception:
+                so_animal = False
+            if so_animal:
+                falhas["(cortado por animals[Mesh])"] += 1
+
+        linha = f"{desc[:39]:<40}{pmid:>10}  " + "".join(marcas)
+        linha += f"{'ok' if na_janela else 'FORA':<9}"
+        if excluir_animais:
+            linha += "CORTA" if so_animal else "ok"
+        print(linha)
 
     print("\n" + "=" * 78)
     print("ONDE A ESTRATÉGIA PERDE")
@@ -124,6 +146,10 @@ def main() -> None:
     print("    bloco, e triе pelo desfecho.")
     print("  • cai na janela -> confira se o filtro não descarta registros")
     print("    ainda não indexados no MeSH.")
+    print("  • cortado por animals[Mesh] -> a exclusão de animais é convenção")
+    print("    clínica e não cabe em revisão ambiental: estudo validado em")
+    print("    peixe, molusco ou ensaio de ecotoxicidade some da busca.")
+    print("    Ponha EXCLUIR_ANIMAIS = False no config.py da revisão.")
 
 
 if __name__ == "__main__":

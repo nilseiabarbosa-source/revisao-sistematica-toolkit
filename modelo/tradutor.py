@@ -25,9 +25,20 @@ Cada uma custou uma sessao de depuracao. Estao aqui para nao serem redescobertas
 - **Europe PMC**: NUNCA combinar `MESH:` com `TITLE_ABS:` por OR. A API descarta
   as restricoes de campo dos dois lados e cai para busca em texto completo, sem
   avisar. O sintoma e blocos distintos retornando contagens identicas.
+- **Europe PMC**: curinga dentro de frase entre aspas e' ignorado em silencio —
+  `"carbon nanotube*"` devolve o mesmo que `"carbon nanotube"` e perde todo o
+  plural. Em palavra solta o curinga funciona. Ver `_termo_europepmc`.
 - **PubMed**: `humans[Filter]` descarta registros ainda nao indexados no MeSH —
   ou seja, a literatura mais recente, que costuma ser o alvo. Usar exclusao de
   animais.
+- **PubMed**: a exclusao de animais so faz sentido em revisao clinica, e por
+  isso e' desligavel por `EXCLUIR_ANIMAIS = False` no config da revisao. Em
+  revisao AMBIENTAL ela derruba evidencia elegivel em silencio: artigo de
+  sensor validado em peixe, molusco ou ensaio de ecotoxicidade recebe
+  `Animals` no MeSH e nao recebe `Humans`, e some da busca. Medido na revisao
+  de biossensores de nanocarbono: 1 de 13 estudos do gabarito, com os quatro
+  blocos passando individualmente — falha invisivel para o `diagnosticar`
+  antes de a checagem da clausula ser acrescentada a ele.
 - **Scopus**: `LIMIT-TO(DOCTYPE,...)` e sintaxe da interface web; a Search API
   ignora em silencio. O operador correto e `DOCTYPE(...)`.
 - **Scopus**: `TITLE-ABS-KEY` inclui palavras-chave indexadas e quase dobra o
@@ -52,22 +63,59 @@ def bloco_pubmed(bloco: dict, campo: str = "tiab") -> str:
     return "(" + " AND ".join(partes_grupo) + ")"
 
 
-def consulta_pubmed(blocos: list[dict], anos: tuple[int, int]) -> str:
+def consulta_pubmed(
+    blocos: list[dict],
+    anos: tuple[int, int],
+    excluir_animais: bool = True,
+) -> str:
     corpo = " AND ".join(bloco_pubmed(b) for b in blocos)
     data = f'("{anos[0]}/01/01"[Date - Publication] : "{anos[1]}/12/31"[Date - Publication])'
-    # Exclusao de animais em vez de humans[Filter] — ver docstring do modulo.
-    return f"{corpo} AND {data} NOT (animals[Mesh] NOT humans[Mesh])"
+    q = f"{corpo} AND {data}"
+    if excluir_animais:
+        # Exclusao de animais em vez de humans[Filter] — ver docstring do modulo.
+        q += " NOT (animals[Mesh] NOT humans[Mesh])"
+    return q
 
 
 # ------------------------------------------------------------ Europe PMC
+def _termo_europepmc(t: str) -> str:
+    """Um termo na sintaxe do Europe PMC.
+
+    ARMADILHA: o curinga funciona em palavra solta, mas dentro de frase entre
+    aspas e' descartado em silencio — a consulta nao falha, so' devolve menos.
+    Medido em 2026-08-05:
+
+        TITLE_ABS:"carbon nanotube"    18.793
+        TITLE_ABS:"carbon nanotubes"   36.530
+        TITLE_ABS:"carbon nanotube*"   18.793   <-- curinga ignorado
+        TITLE_ABS:sediment             71.042
+        TITLE_ABS:sediment*           158.907   <-- aqui funciona
+
+    Ou seja, `"carbon nanotube*"` perdia todo o plural. Numa revisao com muitos
+    termos compostos isso derrubou o total de 1.914 (PubMed) para 783.
+
+    A saida e' trocar a frase-com-curinga por conjuncao de palavras. Perde-se a
+    adjacencia — 'carbon' e 'nanotube*' podem aparecer separados no resumo —, o
+    que e' troca aceitavel numa revisao de escopo, onde a precisao volta pelos
+    demais blocos e pela triagem. Frase sem curinga continua entre aspas.
+    """
+    t = t.strip()
+    if " " not in t:
+        return f"TITLE_ABS:{t}"
+    if not t.endswith("*"):
+        return f'TITLE_ABS:"{t}"'
+    partes = [
+        f"TITLE_ABS:{p}" if p.endswith("*") or p.isalnum() else f'TITLE_ABS:"{p}"'
+        for p in t.split()
+    ]
+    return "(" + " AND ".join(partes) + ")"
+
+
 def bloco_europepmc(bloco: dict) -> str:
     partes_grupo = []
     for g in bloco["grupos"]:
         # MESH deliberadamente ignorado aqui — ver docstring do modulo.
-        itens = [
-            f'TITLE_ABS:"{t}"' if _frase(t) else f"TITLE_ABS:{t}"
-            for t in g["termos"]
-        ]
+        itens = [_termo_europepmc(t) for t in g["termos"]]
         partes_grupo.append("(" + " OR ".join(itens) + ")")
     return "(" + " AND ".join(partes_grupo) + ")"
 
@@ -153,10 +201,14 @@ TRADUTORES = {
 }
 
 
-def gerar_todas(blocos: list[dict], anos: tuple[int, int]) -> dict[str, str]:
+def gerar_todas(
+    blocos: list[dict],
+    anos: tuple[int, int],
+    excluir_animais: bool = True,
+) -> dict[str, str]:
     """Todas as strings de uma vez, para gravar no log PRISMA-S."""
     return {
-        "pubmed": consulta_pubmed(blocos, anos),
+        "pubmed": consulta_pubmed(blocos, anos, excluir_animais),
         "europepmc": consulta_europepmc(blocos, anos),
         "scopus": consulta_scopus(blocos, anos),
         "arxiv": consulta_arxiv(blocos),

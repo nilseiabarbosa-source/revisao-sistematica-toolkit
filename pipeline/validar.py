@@ -27,6 +27,7 @@ from modelo.tradutor import (  # noqa: E402
     consulta_europepmc,
     consulta_pubmed,
     consulta_scopus,
+    consulta_semanticscholar,
 )
 
 
@@ -41,7 +42,7 @@ def carregar_config(slug: str):
     return mod
 
 
-def adaptador(base: str):
+def adaptador(base: str, anos: tuple[int, int] | None = None):
     """Importa sob demanda — bases com credencial não devem quebrar o resto."""
     if base == "pubmed":
         from fontes import PubMed
@@ -60,7 +61,7 @@ def adaptador(base: str):
         return Scopus(view="STANDARD")
     if base == "semanticscholar":
         from fontes import SemanticScholar
-        return SemanticScholar()
+        return SemanticScholar(anos=anos)
     if base == "dblp":
         from fontes import DBLP
         return DBLP()
@@ -72,13 +73,22 @@ def adaptador(base: str):
 
 def consulta_para(base: str, cfg, blocos):
     if base == "pubmed":
-        return consulta_pubmed(blocos, cfg.ANOS)
+        # Revisao ambiental costuma precisar de EXCLUIR_ANIMAIS = False; ver a
+        # docstring de modelo/tradutor.py. Padrao mantido para nao alterar as
+        # revisoes clinicas ja configuradas.
+        return consulta_pubmed(
+            blocos, cfg.ANOS, getattr(cfg, "EXCLUIR_ANIMAIS", True)
+        )
     if base == "europepmc":
         return consulta_europepmc(blocos, cfg.ANOS)
     if base == "scopus":
         return consulta_scopus(blocos, cfg.ANOS)
     if base == "arxiv":
         return consulta_arxiv(blocos)
+    if base == "semanticscholar":
+        # Sintaxe propria: `+` e' AND, `|` e' OR. A janela de anos nao vai na
+        # string — vai por parametro da API, via SemanticScholar(anos=...).
+        return consulta_semanticscholar(blocos)
     raise ValueError(f"sem tradutor de consulta para '{base}'")
 
 
@@ -102,7 +112,7 @@ def main() -> None:
         try:
             qa = consulta_para(base, cfg, cfg.BLOCOS)
             consultas[base] = qa
-            ad = adaptador(base)
+            ad = adaptador(base, cfg.ANOS)
             na = ad.contar(qa)
             nb = ""
             if getattr(cfg, "BLOCOS_VERTENTE_B", None):

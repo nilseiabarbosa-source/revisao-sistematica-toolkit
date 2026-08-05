@@ -27,14 +27,24 @@ CAMPOS = ",".join([
 class SemanticScholar(FonteBase):
     nome = "semanticscholar"
 
-    def __init__(self, api_key: str | None = None, req_por_segundo: float = 1.0) -> None:
+    def __init__(
+        self,
+        api_key: str | None = None,
+        req_por_segundo: float = 1.0,
+        anos: tuple[int, int] | None = None,
+    ) -> None:
         # Sem chave o limite e compartilhado entre todos os usuarios anonimos;
         # 1 req/s evita 429 na maior parte do tempo.
         self.http = ClienteHTTP(req_por_segundo)
         if api_key:
             self.http.sessao.headers["x-api-key"] = api_key
+        # A janela vem da revisao. Sem ela o padrao historico e' mantido, mas
+        # coletar fora do recorte custa chamadas e tempo para registros que o
+        # filtro de ano do pipeline descarta logo em seguida.
+        self.faixa_anos = f"{anos[0]}-{anos[1]}" if anos else "2016-2026"
 
-    def contar(self, consulta: str, ano: str | None = "2016-2026") -> int:
+    def contar(self, consulta: str, ano: str | None = None) -> int:
+        ano = ano or self.faixa_anos
         params = {"query": consulta, "fields": "paperId"}
         if ano:
             params["year"] = ano
@@ -45,8 +55,9 @@ class SemanticScholar(FonteBase):
         self,
         consulta: str,
         limite: int = 1000,
-        ano: str | None = "2016-2026",
+        ano: str | None = None,
     ) -> Iterator[Registro]:
+        ano = ano or self.faixa_anos
         token = None
         colhidos = 0
         while colhidos < limite:

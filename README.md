@@ -93,7 +93,9 @@ produzem resultados de aparência normal:
 |---|---|
 | PubMed | `.//ArticleId` alcança os DOIs da lista de referências; o registro recebe o DOI do último artigo citado |
 | PubMed | `humans[Filter]` descarta o que ainda não foi indexado no MeSH — a literatura recente |
+| PubMed | a exclusão de animais é convenção clínica e some com evidência ambiental (peixe, molusco, ecotoxicidade): 1 de 13 estudos do gabarito, com todos os blocos passando. Desligue com `EXCLUIR_ANIMAIS = False` |
 | Europe PMC | `MESH:` combinado com `TITLE_ABS:` por OR faz a API cair para busca em texto completo, em silêncio |
+| Europe PMC | curinga dentro de frase entre aspas é descartado sem avisar: `"carbon nanotube*"` devolve o mesmo que `"carbon nanotube"` e perde todo o plural — custou 48% dos registros até ser corrigido |
 | Scopus | `LIMIT-TO(DOCTYPE,...)` é sintaxe da interface web; a API ignora sem avisar |
 | Scopus | `cursor` exige entitlement; `start` trava em 5.000 — a saída é fatiar por ano |
 
@@ -102,9 +104,29 @@ ele.** Se não mudou, o filtro não funcionou.
 
 Detalhes em [`docs/GUIA_DE_ESTUDO.md`](docs/GUIA_DE_ESTUDO.md).
 
+## Usar em outra máquina
+
+```bash
+git clone https://github.com/nilseiabarbosa-source/revisao-sistematica-toolkit.git
+cd revisao-sistematica-toolkit
+pip install -r requirements.txt
+cp .env.exemplo .env        # no Windows: copy .env.exemplo .env
+```
+
+Abra o `.env` e preencha **`EMAIL_CONTATO` com o seu endereço**. Não é
+formalidade: esse e-mail vai em cada requisição a NCBI, Crossref, Unpaywall e
+OpenAlex, e é por ele que essas APIs identificam quem está chamando. Rodar com
+o e-mail de outra pessoa faz um eventual bloqueio por excesso de requisição
+recair sobre ela.
+
+As revisões versionadas trazem `config.py`, `README.md` e os logs, mas **não**
+os registros coletados — são grandes e regeneráveis. Para reproduzir uma
+revisão existente, rode `pipeline.validar` (confirma que a busca ainda recupera
+o gabarito) e depois `pipeline.buscar`.
+
 ## Credenciais
 
-Bases que exigem chave leem de um arquivo `.env` na raiz:
+Bases que exigem chave leem do mesmo `.env`:
 
 ```
 SCOPUS_API_KEY=...

@@ -340,6 +340,56 @@ fecha — role para cima.
 
 ---
 
+## Passo 12 — Bases sem API: exportar e importar
+
+Web of Science, ScienceDirect, IEEE Xplore, GeoRef e Embase não têm API aberta.
+Para essas, a busca é colada na interface e o resultado exportado em RIS. Depois:
+
+```
+python -m pipeline.importar --revisao NOME --arquivo wos.ris ieee.ris
+```
+
+ou, para uma pasta inteira:
+
+```
+python -m pipeline.importar --revisao NOME --pasta manuais
+```
+
+Ele junta os arquivos ao que as APIs já trouxeram, aplica a janela de anos,
+deduplica **tudo de novo** e reescreve o `.ris` e o `.csv` de triagem. Pode
+rodar quantas vezes quiser: reimportar o mesmo arquivo não duplica nada e não
+empilha linha repetida no log PRISMA-S.
+
+O nome do arquivo vira o rótulo da fonte no log, então vale nomear direito —
+`wos.ris` e não `savedrecs(3).ris`.
+
+---
+
+## Revisão ambiental? Desligue a exclusão de animais
+
+Vale para qualquer revisão que não seja clínica.
+
+O tradutor acrescenta `NOT (animals[Mesh] NOT humans[Mesh])` à consulta do
+PubMed. É convenção de revisão clínica, e numa revisão ambiental ela **derruba
+evidência elegível em silêncio**: artigo de sensor validado em peixe, molusco
+ou ensaio de ecotoxicidade recebe `Animals` no MeSH, não recebe `Humans`, e
+some da busca.
+
+Medido na revisão de biossensores de nanocarbono: um dos 13 estudos do gabarito
+desaparecia, e o total do PubMed caía de 1.914 para 1.818. Os quatro blocos
+passavam, a janela passava — não havia como perceber olhando.
+
+Para desligar, acrescente uma linha ao `config.py` da revisão:
+
+```
+EXCLUIR_ANIMAIS = False
+```
+
+Rode o `validar` antes e depois e compare a contagem. Se não mudou nada, ou a
+sua literatura não tem estudo com animal, ou a linha está no lugar errado.
+
+---
+
 ## Resumo dos comandos
 
 ```
@@ -347,6 +397,7 @@ python iniciar_revisao.py                          criar a revisão
 python -m pipeline.validar --revisao NOME          testar (rápido)
 python -m pipeline.diagnosticar --revisao NOME     ver o que falha
 python -m pipeline.buscar --revisao NOME           coletar (demorado)
+python -m pipeline.importar --revisao NOME --arquivo X.ris    juntar base sem API
 dir revisoes                                       listar as revisões
 ```
 

@@ -49,7 +49,7 @@ def coletar(base: str, cfg, blocos, rotulo: str, limite: int, cache: Path):
         return [], None
 
     try:
-        ad = adaptador(base)
+        ad = adaptador(base, cfg.ANOS)
         total = ad.contar(q)
         print(f"  {rotulo}: {total} disponíveis", end="", flush=True)
         regs = ad.coletar(q, limite=min(limite, total) if total else limite)
@@ -177,7 +177,8 @@ def main() -> None:
         json.dumps(logs, ensure_ascii=False, indent=2), encoding="utf-8")
     (saida / "strings_de_busca.txt").write_text(
         "\n\n".join(f"### {k}\n{v}" for k, v in
-                    gerar_todas(cfg.BLOCOS, cfg.ANOS).items()),
+                    gerar_todas(cfg.BLOCOS, cfg.ANOS,
+                                getattr(cfg, "EXCLUIR_ANIMAIS", True)).items()),
         encoding="utf-8")
     (saida / "relatorio_dedup.txt").write_text(res.resumo_prisma(), encoding="utf-8")
     exportar_ris(res.unicos, saida / "registros_para_triagem.ris")
