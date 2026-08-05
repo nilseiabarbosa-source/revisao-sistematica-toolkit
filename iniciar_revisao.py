@@ -311,6 +311,19 @@ def main() -> None:
         if not titulo:
             print("Título é obrigatório.")
             sys.exit(1)
+
+        # Conferir a pasta AGORA, nao no fim. Verificar so depois de todas as
+        # perguntas fazia o usuario digitar blocos e gabarito inteiros para
+        # entao descobrir que o nome ja estava em uso, e perder tudo.
+        slug_provisorio = args.slug or slugificar(titulo)[:48]
+        if (REVISOES / slug_provisorio).exists():
+            print(f"\nJá existe uma revisão chamada '{slug_provisorio}'.")
+            print(f"  Pasta: revisoes/{slug_provisorio}")
+            print("\nEscolha: use outro título, ou apague a pasta antiga, ou")
+            print(f"rode de novo com outro nome:  {PY} iniciar_revisao.py "
+                  f"--slug {slug_provisorio}_v2")
+            sys.exit(1)
+
         tipo = perguntar("Tipo (escopo / sistematica)", "escopo")
         print("\nPergunta em formato PCC (revisão de escopo) ou PICO:")
         pcc = {
