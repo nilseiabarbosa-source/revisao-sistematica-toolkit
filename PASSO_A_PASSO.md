@@ -365,6 +365,35 @@ O nome do arquivo vira o rótulo da fonte no log, então vale nomear direito —
 
 ---
 
+## Passo 13 — Preencher os resumos que faltam
+
+Registro sem resumo tem que ser triado só pelo título, e título de artigo de
+sensor quase nunca diz a matriz testada nem o estágio de validação. O revisor
+acaba excluindo por falta de informação, e essa perda não aparece em lugar
+nenhum.
+
+```
+python -m pipeline.enriquecer --revisao NOME
+```
+
+Busca os resumos faltantes por DOI, em cascata: Europe PMC (25 DOIs por
+requisição), depois OpenAlex, depois Crossref. Só mexe em registro com resumo
+vazio, então rodar de novo é seguro.
+
+**O rendimento depende muito da sua literatura.** Em revisão biomédica o Europe
+PMC resolve quase tudo. Na revisão ambiental de biossensores rendeu pouco — 53
+de 415 — e o motivo é estrutural, não do programa: **Springer e Elsevier não
+liberam resumo** nem ao Crossref nem ao OpenAlex, e sozinhos eram 95% do que
+faltava. Vale rodar de qualquer forma, porque é rápido e o que vier é lucro.
+
+Um consolo: se você for rodar as bases sem API (Passo 12), a exportação RIS do
+ScienceDirect **traz o resumo**, e a deduplicação prefere sempre o registro mais
+completo. Ou seja, os que faltam da Elsevier se resolvem sozinhos quando você
+importar aquele arquivo — e importar um registro sem resumo nunca apaga um
+resumo que já existia.
+
+---
+
 ## Revisão ambiental? Desligue a exclusão de animais
 
 Vale para qualquer revisão que não seja clínica.
@@ -398,6 +427,7 @@ python -m pipeline.validar --revisao NOME          testar (rápido)
 python -m pipeline.diagnosticar --revisao NOME     ver o que falha
 python -m pipeline.buscar --revisao NOME           coletar (demorado)
 python -m pipeline.importar --revisao NOME --arquivo X.ris    juntar base sem API
+python -m pipeline.enriquecer --revisao NOME       buscar resumos faltantes
 dir revisoes                                       listar as revisões
 ```
 

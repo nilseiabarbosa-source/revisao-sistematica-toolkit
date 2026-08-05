@@ -16,7 +16,14 @@ from __future__ import annotations
 import os
 from typing import Iterator
 
-from .base import EMAIL_CONTATO, ClienteHTTP, FonteBase, Registro, extrair_ano
+from .base import (
+    EMAIL_CONTATO,
+    ClienteHTTP,
+    FonteBase,
+    Registro,
+    extrair_ano,
+    normalizar_doi,
+)
 
 BASE = "https://api.openalex.org/works"
 
@@ -78,6 +85,26 @@ class OpenAlex(FonteBase):
             cursor = dados.get("meta", {}).get("next_cursor")
             if not cursor:
                 return
+
+    def por_doi(self, doi: str) -> Registro | None:
+        """Um registro pelo DOI.
+
+        Continua livre sem chave: o que passou a exigir credencial e consumir
+        cota, em 13/02/2026, foi a busca e a filtragem em massa. Consulta de
+        registro unico nao entra nessa conta — por isso este metodo serve para
+        enriquecer resumo faltante mesmo sem OPENALEX_API_KEY no .env.
+        """
+        doi = normalizar_doi(doi)
+        if not doi:
+            return None
+        try:
+            r = self.http.get(f"{BASE}/https://doi.org/{doi}", params=self._params({}))
+        except RuntimeError:
+            return None
+        try:
+            return self._converter(r.json())
+        except Exception:
+            return None
 
     @staticmethod
     def _resumo(indice: dict | None) -> str:

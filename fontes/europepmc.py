@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import Iterator
 
-from .base import ClienteHTTP, FonteBase, Registro, extrair_ano
+from .base import ClienteHTTP, FonteBase, Registro, extrair_ano, normalizar_doi
 
 BASE = "https://www.ebi.ac.uk/europepmc/webservices/rest"
 
@@ -55,6 +55,40 @@ class EuropePMC(FonteBase):
             params={"query": consulta, "format": "json", "pageSize": 1},
         )
         return int(r.json().get("hitCount", 0))
+
+    def por_dois(self, dois: list[str], por_lote: int = 25) -> dict[str, Registro]:
+        """Recupera varios DOIs de uma vez. Devolve {doi_normalizado: Registro}.
+
+        Uma requisicao por DOI e' desperdicio: a sintaxe do Europe PMC aceita OR,
+        e 25 por chamada transforma 400 requisicoes em 16. O lote nao vai muito
+        alem disso porque a consulta viaja na URL e estoura o limite de tamanho.
+
+        DOIs que a base nao conhece simplesmente nao aparecem no resultado — o
+        chamador compara o que pediu com o que voltou.
+        """
+        achados: dict[str, Registro] = {}
+        limpos = [d for d in (normalizar_doi(x) for x in dois) if d]
+        for i in range(0, len(limpos), por_lote):
+            lote = limpos[i : i + por_lote]
+            consulta = " OR ".join(f'DOI:"{d}"' for d in lote)
+            try:
+                r = self.http.get(
+                    f"{BASE}/search",
+                    params={
+                        "query": consulta,
+                        "format": "json",
+                        "pageSize": por_lote,
+                        "resultType": "core",
+                    },
+                )
+            except RuntimeError:
+                continue  # lote falhou; os demais seguem
+            for item in r.json().get("resultList", {}).get("result", []):
+                reg = self._converter(item)
+                chave = normalizar_doi(reg.doi)
+                if chave:
+                    achados[chave] = reg
+        return achados
 
     def texto_completo_xml(self, pmcid: str) -> str | None:
         """XML JATS do texto completo, quando o artigo esta no subconjunto OA.

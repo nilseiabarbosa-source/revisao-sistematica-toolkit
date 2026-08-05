@@ -22,5 +22,13 @@
     "n_recuperados": 2538,
     "n_total_disponivel": 2538,
     "erro": ""
+  },
+  {
+    "fonte": "enriquecimento_resumos",
+    "consulta": "recuperacao de resumos faltantes por DOI (Europe PMC, depois Crossref)",
+    "data_hora": "2026-08-05T18:23:58+00:00",
+    "n_recuperados": 43,
+    "n_total_disponivel": 368,
+    "erro": ""
   }
 ]
