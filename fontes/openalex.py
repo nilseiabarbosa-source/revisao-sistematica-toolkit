@@ -34,15 +34,27 @@ class OpenAlex(FonteBase):
             p["api_key"] = self.api_key
         return p
 
-    def contar(self, consulta: str, filtros: str = "") -> int:
-        f = f"{filtros},default.search:{consulta}" if filtros else f"default.search:{consulta}"
+    # ATENCAO ao campo de busca. `default.search` ordena por relevancia e
+    # devolve qualquer coisa vagamente proxima: usado com uma lista de palavras,
+    # produziu 3% de precisao nesta revisao. `title_and_abstract.search` aceita
+    # AND/OR/aspas e se comporta como busca booleana — verificado em
+    # testar_openalex_booleano.py. Use `booleana=True` sempre que a consulta
+    # tiver estrutura logica.
+    def _filtro(self, consulta: str, filtros: str, booleana: bool) -> str:
+        campo = "title_and_abstract.search" if booleana else "default.search"
+        alvo = f"{campo}:{consulta}"
+        return f"{filtros},{alvo}" if filtros else alvo
+
+    def contar(self, consulta: str, filtros: str = "", booleana: bool = True) -> int:
+        f = self._filtro(consulta, filtros, booleana)
         r = self.http.get(BASE, params=self._params({"filter": f, "per-page": 1}))
         return int(r.json().get("meta", {}).get("count", 0))
 
     def buscar(
-        self, consulta: str, limite: int = 1000, filtros: str = ""
+        self, consulta: str, limite: int = 1000, filtros: str = "",
+        booleana: bool = True,
     ) -> Iterator[Registro]:
-        f = f"{filtros},default.search:{consulta}" if filtros else f"default.search:{consulta}"
+        f = self._filtro(consulta, filtros, booleana)
         cursor = "*"
         colhidos = 0
         while colhidos < limite:
